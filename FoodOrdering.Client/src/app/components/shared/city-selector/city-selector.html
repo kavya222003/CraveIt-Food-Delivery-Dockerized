@@ -1,0 +1,47 @@
+@if (isVisible) {
+    <div class="overlay" (click)="close()">
+        <div class="popup animate-slideUp" (click)="$event.stopPropagation()">
+
+            <div class="popup-header">
+                <div class="popup-logo">
+                    <span class="logo-icon">🍕</span>
+                    <span class="logo-text">CraveIt</span>
+                </div>
+                <h2>Select Your City</h2>
+                <p>Choose your city to see restaurants near you</p>
+            </div>
+
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search your city..."
+                    [(ngModel)]="searchText"
+                    (input)="search()"
+                    autofocus
+                />
+            </div>
+
+            <div class="cities-grid">
+                @for (city of filteredCities; track city.name) {
+                    <button
+                        class="city-btn"
+                        (click)="select(city)">
+                        <span class="city-emoji">{{ city.emoji }}</span>
+                        <span class="city-name">{{ city.name }}</span>
+                        <span class="city-state">{{ city.state }}</span>
+                    </button>
+                }
+
+                @if (filteredCities.length === 0) {
+                    <div class="no-results">
+                        <span>😕</span>
+                        <p>No cities found</p>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+}

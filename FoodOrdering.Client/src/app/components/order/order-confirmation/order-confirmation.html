@@ -1,0 +1,76 @@
+<div class="container">
+
+    @if (isLoading) {
+        <div class="spinner"></div>
+    }
+
+    @if (errorMessage) {
+        <div class="alert-error">{{ errorMessage }}</div>
+    }
+
+    @if (order) {
+        <div class="confirmation-card">
+
+            <div class="success-header">
+                <div class="success-icon">🎉</div>
+                <h1>Order Placed Successfully!</h1>
+                <p>Your order #{{ order.orderId }} has been received</p>
+            </div>
+
+            <div class="order-details">
+                <div class="detail-row">
+                    <span class="label">Restaurant</span>
+                    <span class="value">{{ order.restaurantName }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status</span>
+                    <span class="badge badge-pending">{{ order.status }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Delivery Address</span>
+                    <span class="value">{{ order.deliveryAddress }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Payment</span>
+                    <span class="value">{{ order.paymentMethod }} —
+                        <span [class]="order.paymentStatus === 'Success' ? 'text-green' : 'text-orange'">
+                            {{ order.paymentStatus }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <h3>Order Items</h3>
+                @for (item of order.items; track item.itemId) {
+                    <div class="order-item">
+                        <span class="item-name">{{ item.itemName }}</span>
+                        <span class="item-qty">x{{ item.quantity }}</span>
+                        <span class="item-price">₹{{ item.subtotal }}</span>
+                    </div>
+                }
+                <div class="order-total">
+                    <span>Total Amount</span>
+                    <span>₹{{ order.totalAmount }}</span>
+                </div>
+            </div>
+
+            @if (order.paymentStatus === 'Pending') {
+                <button class="btn-pay" (click)="processPayment()">
+                    💳 Pay Now — ₹{{ order.totalAmount }}
+                </button>
+            }
+
+            <div class="action-buttons">
+                <button class="btn-secondary" (click)="goToRestaurants()">
+                    Order More
+                </button>
+                <button class="btn-primary" (click)="goToOrders()">
+                    View All Orders
+                </button>
+            </div>
+
+        </div>
+    }
+
+</div>

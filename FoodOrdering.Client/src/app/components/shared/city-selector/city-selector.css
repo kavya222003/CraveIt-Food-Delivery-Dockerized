@@ -1,0 +1,140 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.popup {
+    background: white;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+}
+
+.popup-header {
+    padding: 36px 32px 24px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: white;
+}
+
+.popup-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.logo-icon { font-size: 28px; }
+.logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+}
+
+.popup-header h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.popup-header p {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+}
+
+.search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--grey-100);
+}
+
+.search-icon { font-size: 18px; }
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--grey-800);
+    background: transparent;
+}
+
+.search-input::placeholder { color: var(--grey-400); }
+
+.cities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 20px 24px;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.city-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 12px;
+    background: var(--grey-50);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.city-btn:hover {
+    background: white;
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.city-emoji { font-size: 32px; }
+
+.city-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    font-family: 'Poppins', sans-serif;
+}
+
+.city-state {
+    font-size: 11px;
+    color: var(--grey-400);
+    text-align: center;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: var(--grey-400);
+}
+
+.no-results span { font-size: 48px; display: block; margin-bottom: 12px; }
+.no-results p { font-size: 15px; }
+
+@media (max-width: 480px) {
+    .cities-grid { grid-template-columns: repeat(2, 1fr); }
+    .popup-header { padding: 28px 20px 20px; }
+}

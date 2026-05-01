@@ -1,0 +1,65 @@
+<div class="container">
+
+    <div class="page-header">
+        <h1 class="page-title">📦 My Orders</h1>
+        <p class="page-subtitle">Track all your past orders</p>
+    </div>
+
+    @if (isLoading) {
+        <div class="spinner"></div>
+    }
+
+    @if (errorMessage) {
+        <div class="alert-error">{{ errorMessage }}</div>
+    }
+
+    @if (!isLoading && orders.length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <h3>No orders yet!</h3>
+            <p>Start ordering from your favourite restaurants.</p>
+            <button class="btn-primary" (click)="goToRestaurants()">
+                Browse Restaurants
+            </button>
+        </div>
+    }
+
+    <div class="orders-list">
+        @for (order of orders; track order.orderId) {
+            <div class="order-card" (click)="viewOrder(order.orderId)">
+
+                <div class="order-top">
+                    <div>
+                        <h3 class="restaurant-name">{{ order.restaurantName }}</h3>
+                        <p class="order-date">
+                            {{ order.orderedAt | date: 'dd MMM yyyy, hh:mm a' }}
+                        </p>
+                    </div>
+                    <span [class]="'badge ' + getStatusClass(order.status)">
+                        {{ order.status }}
+                    </span>
+                </div>
+
+                <div class="order-items-preview">
+                    @for (item of order.items.slice(0,2); track item.itemId) {
+                        <span class="item-chip">
+                            {{ item.itemName }} x{{ item.quantity }}
+                        </span>
+                    }
+                    @if (order.items.length > 2) {
+                        <span class="item-chip more">
+                            +{{ order.items.length - 2 }} more
+                        </span>
+                    }
+                </div>
+
+                <div class="order-bottom">
+                    <span class="order-total">₹{{ order.totalAmount }}</span>
+                    <span class="view-details">View Details →</span>
+                </div>
+
+            </div>
+        }
+    </div>
+
+</div>

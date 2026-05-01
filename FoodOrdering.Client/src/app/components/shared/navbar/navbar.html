@@ -1,0 +1,110 @@
+<nav class="navbar">
+    <div class="nav-inner">
+
+        <!-- Logo -->
+        <a routerLink="/" class="nav-logo">
+            <span class="logo-icon">🍕</span>
+            <span class="logo-text">CraveIt</span>
+        </a>
+
+        <!-- City Selector -->
+        <button class="city-btn" (click)="openCitySelector()">
+            <span class="city-icon">📍</span>
+            <span class="city-name">
+                {{ selectedCity ? selectedCity.name : 'Select City' }}
+            </span>
+            <span class="city-arrow">▾</span>
+        </button>
+
+        <!-- Desktop Nav -->
+        <div class="nav-links">
+            <a routerLink="/restaurants" class="nav-link">Restaurants</a>
+
+            @if (authService.isLoggedIn()) {
+                <a routerLink="/orders" class="nav-link">My Orders</a>
+
+                <a routerLink="/cart" class="nav-link cart-link">
+                    <span class="cart-icon">🛒</span>
+                    @if (cartCount > 0) {
+                        <span class="cart-badge">{{ cartCount }}</span>
+                    }
+                </a>
+
+                @if (authService.isAdmin()) {
+                    <a routerLink="/admin" class="nav-link admin-link">
+                        ⚙️ Admin
+                    </a>
+                }
+
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        {{ authService.getUserName()?.charAt(0)?.toUpperCase() }}
+                    </div>
+                    <div class="user-dropdown">
+                        <div class="user-info">
+                            <span class="user-name">
+                                {{ authService.getUserName() }}
+                            </span>
+                            <span class="user-role">
+                                {{ authService.getRole() }}
+                            </span>
+                        </div>
+                        <button class="btn-logout" (click)="logout()">
+                            🚪 Logout
+                        </button>
+                    </div>
+                </div>
+            }
+
+            @if (!authService.isLoggedIn()) {
+                <a routerLink="/login" class="nav-link">Login</a>
+                <a routerLink="/register" class="btn btn-primary btn-sm">
+                    Sign Up Free
+                </a>
+            }
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" (click)="toggleMenu()">
+            {{ isMenuOpen ? '✕' : '☰' }}
+        </button>
+
+    </div>
+
+    <!-- Mobile Menu -->
+    @if (isMenuOpen) {
+        <div class="mobile-menu animate-fadeIn">
+            <a routerLink="/restaurants" class="mob-link"
+                (click)="isMenuOpen=false">🏪 Restaurants</a>
+
+            @if (authService.isLoggedIn()) {
+                <a routerLink="/orders" class="mob-link"
+                    (click)="isMenuOpen=false">📦 My Orders</a>
+                <a routerLink="/cart" class="mob-link"
+                    (click)="isMenuOpen=false">
+                    🛒 Cart
+                    @if (cartCount > 0) {
+                        <span class="cart-badge-mob">{{ cartCount }}</span>
+                    }
+                </a>
+                @if (authService.isAdmin()) {
+                    <a routerLink="/admin" class="mob-link"
+                        (click)="isMenuOpen=false">⚙️ Admin</a>
+                }
+                <button class="mob-logout" (click)="logout()">
+                    🚪 Logout
+                </button>
+            }
+
+            @if (!authService.isLoggedIn()) {
+                <a routerLink="/login" class="mob-link"
+                    (click)="isMenuOpen=false">🔐 Login</a>
+                <a routerLink="/register" class="mob-link"
+                    (click)="isMenuOpen=false">✨ Sign Up</a>
+            }
+        </div>
+    }
+</nav>
+
+<!-- City Selector Popup -->
+<app-city-selector />

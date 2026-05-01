@@ -1,0 +1,6 @@
+@OlnlineFoodOrderingAPI_HostAddress = http://localhost:5063
+
+GET {{OlnlineFoodOrderingAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

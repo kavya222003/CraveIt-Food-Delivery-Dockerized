@@ -1,0 +1,123 @@
+<div class="container">
+
+    <div class="cart-header">
+        <button class="btn-back" (click)="goBack()">← Back</button>
+        <h1 class="page-title">🛒 Your Cart</h1>
+    </div>
+
+    @if (cartItems.length === 0) {
+        <div class="empty-cart">
+            <div class="empty-icon">🛒</div>
+            <h3>Your cart is empty!</h3>
+            <p>Add items from a restaurant to get started.</p>
+            <button class="btn-primary" (click)="goBack()">
+                Browse Restaurants
+            </button>
+        </div>
+    }
+
+    @if (cartItems.length > 0) {
+        <div class="cart-layout">
+
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <h2 class="section-title">Order Items</h2>
+
+                @for (item of cartItems; track item.menuItem.itemId) {
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <h4 class="item-name">{{ item.menuItem.name }}</h4>
+                            <p class="item-price">₹{{ item.menuItem.price }} each</p>
+                        </div>
+                        <div class="item-controls">
+                            <button class="qty-btn"
+                                (click)="updateQuantity(item.menuItem.itemId, item.quantity - 1)">
+                                −
+                            </button>
+                            <span class="qty-value">{{ item.quantity }}</span>
+                            <button class="qty-btn"
+                                (click)="updateQuantity(item.menuItem.itemId, item.quantity + 1)">
+                                +
+                            </button>
+                        </div>
+                        <div class="item-subtotal">
+                            ₹{{ item.menuItem.price * item.quantity }}
+                        </div>
+                        <button class="btn-remove"
+                            (click)="removeItem(item.menuItem.itemId)">
+                            🗑️
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2 class="section-title">Order Summary</h2>
+
+                <div class="summary-row">
+                    <span>Items ({{ cartService.getItemCount() }})</span>
+                    <span>₹{{ cartService.getTotal() }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <span class="free">FREE</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>₹{{ cartService.getTotal() }}</span>
+                </div>
+
+                @if (errorMessage) {
+                    <div class="alert-error">{{ errorMessage }}</div>
+                }
+
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea
+                        class="form-control"
+                        [(ngModel)]="deliveryAddress"
+                        placeholder="Enter your full delivery address"
+                        rows="3">
+                    </textarea>
+                </div>
+
+                <div class="form-group">
+    <label class="form-label">📞 Phone Number</label>
+    <input
+        type="tel"
+        class="form-control"
+        [(ngModel)]="phoneNumber"
+        placeholder="Enter 10-digit phone number"
+        maxlength="10"
+    />
+    <small class="field-hint">
+        For delivery coordination only
+    </small>
+</div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select class="form-control" [(ngModel)]="paymentMethod">
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+
+                <button
+                    class="btn-place-order"
+                    (click)="placeOrder()"
+                    [disabled]="isLoading">
+                    @if (isLoading) {
+                        Placing Order...
+                    } @else {
+                        Place Order →
+                    }
+                </button>
+
+            </div>
+        </div>
+    }
+
+</div>

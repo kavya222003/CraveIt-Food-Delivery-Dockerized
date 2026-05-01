@@ -1,0 +1,467 @@
+<div class="admin-layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>⚙️ Admin Panel</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <button [class.active]="activeTab==='dashboard'" (click)="setTab('dashboard')">
+                📊 Dashboard
+            </button>
+            <button [class.active]="activeTab==='restaurants'" (click)="setTab('restaurants')">
+                🏪 Restaurants
+            </button>
+            <button [class.active]="activeTab==='menu'" (click)="setTab('menu')">
+                🍽️ Menu Items
+            </button>
+            <button [class.active]="activeTab==='orders'" (click)="setTab('orders')">
+                📦 Orders
+            </button>
+            <button [class.active]="activeTab==='users'" (click)="setTab('users')">
+                👥 Users
+            </button>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+
+        @if (isLoading) { <div class="spinner"></div> }
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- DASHBOARD TAB                       -->
+        <!-- ═══════════════════════════════════ -->
+        @if (activeTab === 'dashboard' && stats && !isLoading) {
+            <div>
+                <h1 class="page-title">Dashboard Overview</h1>
+                <div class="stats-grid">
+                    <div class="stat-card orange">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value">{{ stats.totalOrdersToday }}</div>
+                        <div class="stat-label">Orders Today</div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value">₹{{ stats.totalRevenueToday }}</div>
+                        <div class="stat-label">Revenue Today</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon">🏪</div>
+                        <div class="stat-value">{{ stats.activeRestaurants }}</div>
+                        <div class="stat-label">Active Restaurants</div>
+                    </div>
+                    <div class="stat-card yellow">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-value">{{ stats.pendingOrders }}</div>
+                        <div class="stat-label">Pending Orders</div>
+                    </div>
+                    <div class="stat-card navy">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value">{{ stats.totalUsers }}</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-value">{{ stats.totalOrdersAllTime }}</div>
+                        <div class="stat-label">All Time Orders</div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- RESTAURANTS TAB                     -->
+        <!-- ═══════════════════════════════════ -->
+        @if (activeTab === 'restaurants' && !isLoading) {
+            <div>
+                <div class="tab-header">
+                    <h1 class="page-title">Manage Restaurants</h1>
+                    <button class="btn-add-new" (click)="openAddRestaurant()">
+                        + Add Restaurant
+                    </button>
+                </div>
+
+                <!-- Add / Edit Form -->
+                @if (showRestaurantForm) {
+                    <div class="form-card">
+                        <h3 class="form-title">
+                            {{ editingRestaurant ? '✏️ Edit Restaurant' : '➕ Add New Restaurant' }}
+                        </h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Restaurant Name *</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="restaurantForm.name"
+                                    placeholder="e.g. Spice Garden" />
+                            </div>
+                            <div class="form-group">
+                                <label>City *</label>
+                                <select class="form-control" [(ngModel)]="restaurantForm.city">
+                                    <option value="">Select City</option>
+                                    @for (city of cities; track city) {
+                                        <option [value]="city">{{ city }}</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="restaurantForm.address"
+                                    placeholder="Street, Area" />
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="restaurantForm.phone"
+                                    placeholder="9XXXXXXXXX" />
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Image URL</label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="restaurantForm.imageUrl"
+                                    placeholder="https://..." />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn-save" (click)="saveRestaurant()">
+                                {{ editingRestaurant ? 'Update' : 'Add Restaurant' }}
+                            </button>
+                            <button class="btn-cancel" (click)="cancelRestaurantForm()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <!-- Restaurants Table -->
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (r of restaurants; track r.restaurantId) {
+                                <tr>
+                                    <td>#{{ r.restaurantId }}</td>
+                                    <td><strong>{{ r.name }}</strong></td>
+                                    <td><span class="city-badge">{{ r.city }}</span></td>
+                                    <td>{{ r.address }}</td>
+                                    <td>{{ r.phone }}</td>
+                                    <td>
+                                        <span [class]="r.isActive ? 'badge-active' : 'badge-inactive'">
+                                            {{ r.isActive ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="btn-edit" (click)="openEditRestaurant(r)">
+                                                ✏️ Edit
+                                            </button>
+                                            <button class="btn-delete" (click)="deleteRestaurant(r.restaurantId, r.name)">
+                                                🗑️ Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (restaurants.length === 0) {
+                        <div class="empty-table">No restaurants yet. Click "Add Restaurant" to get started.</div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- MENU ITEMS TAB                      -->
+        <!-- ═══════════════════════════════════ -->
+        @if (activeTab === 'menu' && !isLoading) {
+            <div>
+
+                <!-- Step 1: Select a restaurant -->
+                @if (!selectedRestaurantForMenu) {
+                    <div>
+                        <h1 class="page-title">🍽️ Menu Items</h1>
+                        <p class="page-subtitle">Select a restaurant to manage its menu</p>
+                        <div class="restaurant-picker-grid">
+                            @for (r of restaurants; track r.restaurantId) {
+                                <div class="restaurant-picker-card" (click)="selectRestaurantForMenu(r)">
+                                    <div class="picker-name">{{ r.name }}</div>
+                                    <div class="picker-city">📍 {{ r.city }}</div>
+                                    <div class="picker-action">Manage Menu →</div>
+                                </div>
+                            }
+                            @if (restaurants.length === 0) {
+                                <p>No restaurants found. Add restaurants first.</p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Step 2: Manage menu for selected restaurant -->
+                @if (selectedRestaurantForMenu) {
+                    <div>
+                        <div class="tab-header">
+                            <div class="menu-header-left">
+                                <button class="btn-back-sm" (click)="backToRestaurantList()">
+                                    ← Back
+                                </button>
+                                <h1 class="page-title">
+                                    {{ selectedRestaurantForMenu.name }}
+                                    <span class="city-badge">{{ selectedRestaurantForMenu.city }}</span>
+                                </h1>
+                            </div>
+                            <button class="btn-add-new" (click)="openAddMenuItem()">
+                                + Add Menu Item
+                            </button>
+                        </div>
+
+                        <!-- Add / Edit Menu Item Form -->
+                        @if (showMenuForm) {
+                            <div class="form-card">
+                                <h3 class="form-title">
+                                    {{ editingMenuItem ? '✏️ Edit Menu Item' : '➕ Add Menu Item' }}
+                                </h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Item Name *</label>
+                                        <input type="text" class="form-control"
+                                            [(ngModel)]="menuForm.name"
+                                            placeholder="e.g. Paneer Butter Masala" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Category *</label>
+                                        <select class="form-control" [(ngModel)]="menuForm.category">
+                                            <option value="">Select Category</option>
+                                            @for (cat of categories; track cat) {
+                                                <option [value]="cat">{{ cat }}</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Price (₹) *</label>
+                                        <input type="number" class="form-control"
+                                            [(ngModel)]="menuForm.price"
+                                            placeholder="0" min="0" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Available</label>
+                                        <select class="form-control" [(ngModel)]="menuForm.isAvailable">
+                                            <option [ngValue]="true">Yes</option>
+                                            <option [ngValue]="false">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>Description</label>
+                                        <textarea class="form-control" rows="2"
+                                            [(ngModel)]="menuForm.description"
+                                            placeholder="Short description of the dish">
+                                        </textarea>
+                                    </div>
+                                    <!-- ↓ ADDED: Image URL field -->
+                                    <div class="form-group full-width">
+                                        <label>Image URL</label>
+                                        <input type="text" class="form-control"
+                                            [(ngModel)]="menuForm.imageUrl"
+                                            placeholder="https://images.unsplash.com/..." />
+                                        @if (menuForm.imageUrl) {
+                                            <div class="img-preview-wrap">
+                                                <img [src]="menuForm.imageUrl"
+                                                     alt="Preview"
+                                                     class="img-preview"
+                                                     onerror="this.style.display='none'" />
+                                            </div>
+                                        }
+                                    </div>
+
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn-save" (click)="saveMenuItem()">
+                                        {{ editingMenuItem ? 'Update Item' : 'Add Item' }}
+                                    </button>
+                                    <button class="btn-cancel" (click)="cancelMenuForm()">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Menu Items Table -->
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Description</th>
+                                        <th>Available</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (item of menuItems; track item.itemId) {
+                                        <tr>
+                                            <td>
+                                                @if (item.imageUrl) {
+                                                    <img [src]="item.imageUrl"
+                                                         [alt]="item.name"
+                                                         class="table-img"
+                                                         onerror="this.src=''" />
+                                                } @else {
+                                                    <div class="table-img-placeholder">🍽️</div>
+                                                }
+                                            </td>
+                                            <td><strong>{{ item.name }}</strong></td>
+                                            <td><span class="cat-badge">{{ item.category }}</span></td>
+                                            <td><strong>₹{{ item.price }}</strong></td>
+                                            <td class="desc-cell">{{ item.description }}</td>
+                                            <td>
+                                                <button
+                                                    [class]="item.isAvailable ? 'toggle-on' : 'toggle-off'"
+                                                    (click)="toggleAvailability(item)">
+                                                    {{ item.isAvailable ? '✅ Yes' : '❌ No' }}
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <div class="action-btns">
+                                                    <button class="btn-edit" (click)="openEditMenuItem(item)">
+                                                        ✏️ Edit
+                                                    </button>
+                                                    <button class="btn-delete" (click)="deleteMenuItem(item.itemId, item.name)">
+                                                        🗑️ Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @if (menuItems.length === 0) {
+                                <div class="empty-table">
+                                    No menu items yet. Click "+ Add Menu Item" to get started.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- ORDERS TAB                          -->
+        <!-- ═══════════════════════════════════ -->
+        @if (activeTab === 'orders' && !isLoading) {
+            <div>
+                <div class="tab-header">
+                    <h1 class="page-title">Manage Orders</h1>
+                    <select class="filter-select"
+                        [(ngModel)]="selectedStatus"
+                        (change)="loadOrders()">
+                        <option value="">All Orders</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Out for Delivery">Out for Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Restaurant</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Update Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (order of orders; track order.orderId) {
+                                <tr>
+                                    <td>#{{ order.orderId }}</td>
+                                    <td>{{ order.restaurantName }}</td>
+                                    <td>₹{{ order.totalAmount }}</td>
+                                    <td>
+                                        <span [class]="order.paymentStatus === 'Success' ? 'badge-active' : 'badge-inactive'">
+                                            {{ order.paymentStatus }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span [class]="'badge ' + getStatusClass(order.status)">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <select class="status-select"
+                                            (change)="updateStatus(order.orderId, $any($event.target).value)">
+                                            <option value="">Change...</option>
+                                            <option value="Confirmed">Confirmed</option>
+                                            <option value="Preparing">Preparing</option>
+                                            <option value="Out for Delivery">Out for Delivery</option>
+                                            <option value="Delivered">Delivered</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (orders.length === 0) {
+                        <div class="empty-table">No orders found.</div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- ═══════════════════════════════════ -->
+        <!-- USERS TAB                           -->
+        <!-- ═══════════════════════════════════ -->
+        @if (activeTab === 'users' && !isLoading) {
+            <div>
+                <h1 class="page-title">All Users</h1>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of users; track user.userId) {
+                                <tr>
+                                    <td>#{{ user.userId }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <span [class]="user.role === 'Admin' ? 'badge badge-admin' : 'badge badge-customer'">
+                                            {{ user.role }}
+                                        </span>
+                                    </td>
+                                    <td>{{ user.createdAt | date: 'dd MMM yyyy' }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

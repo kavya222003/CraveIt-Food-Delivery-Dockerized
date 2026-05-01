@@ -1,0 +1,86 @@
+<div class="container">
+
+    <div class="menu-header">
+        <button class="btn-back" (click)="goBack()">← Back</button>
+        <div>
+            <h1 class="page-title">🍽️ Menu</h1>
+            <p class="page-subtitle">Choose your favourite items!</p>
+        </div>
+    </div>
+
+    @if (isLoading) {
+        <div class="spinner"></div>
+    }
+
+    @if (errorMessage) {
+        <div class="alert-error">{{ errorMessage }}</div>
+    }
+
+    @if (!isLoading && menuItems.length > 0) {
+        <!-- Category Filter -->
+        <div class="category-filter">
+            @for (category of categories; track category) {
+                <button
+                    class="category-btn"
+                    [class.active]="selectedCategory === category"
+                    (click)="filterByCategory(category)">
+                    {{ category }}
+                </button>
+            }
+        </div>
+
+        <!-- Menu Items Grid -->
+        <div class="menu-grid">
+            @for (item of filteredItems; track item.itemId) {
+                <div class="menu-card" [class.unavailable]="!item.isAvailable">
+
+                    <!-- ↓ ADDED: Food Image -->
+                    <div class="menu-image">
+                        @if (item.imageUrl) {
+                            <img [src]="item.imageUrl"
+                                 [alt]="item.name"
+                                 onerror="this.parentElement.innerHTML='<div class=\'img-fallback\'>🍽️</div>'" />
+                        } @else {
+                            <div class="img-fallback">🍽️</div>
+                        }
+                        @if (!item.isAvailable) {
+                            <div class="unavailable-overlay">Unavailable</div>
+                        }
+                    </div>
+
+                    <div class="menu-info">
+                        <div class="menu-category">{{ item.category }}</div>
+                        <h3 class="menu-name">{{ item.name }}</h3>
+                        <p class="menu-description">{{ item.description }}</p>
+                        <div class="menu-footer">
+                            <span class="menu-price">₹{{ item.price }}</span>
+                            @if (item.isAvailable) {
+                                <button
+                                    class="btn-add"
+                                    [class.added]="isAdded(item.itemId)"
+                                    (click)="addToCart(item)">
+                                    @if (isAdded(item.itemId)) {
+                                        ✓ Added!
+                                    } @else {
+                                        + Add
+                                    }
+                                </button>
+                            } @else {
+                                <span class="unavailable-badge">Unavailable</span>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+
+    @if (!isLoading && menuItems.length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">🍽️</div>
+            <h3>No menu items available</h3>
+        </div>
+    }
+
+</div>

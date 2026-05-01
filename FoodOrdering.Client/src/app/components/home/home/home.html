@@ -1,0 +1,116 @@
+<div class="home">
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content animate-fadeIn">
+            <div class="hero-badge">🔥 #1 Food Delivery App</div>
+            <h1 class="hero-title">
+                Craving Something<br/>
+                <span class="gradient-text">Delicious?</span>
+            </h1>
+            <p class="hero-subtitle">
+                Order from the best restaurants near you.
+                Fresh food delivered to your door in minutes.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary btn-lg"
+                    (click)="getStarted()">
+                    🍕 Order Now
+                </button>
+                <a routerLink="/restaurants"
+                    class="btn btn-secondary btn-lg">
+                    Browse Restaurants
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Restaurants</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Menu Items</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">30 min</span>
+                    <span class="stat-label">Avg Delivery</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image animate-slideUp">
+            <div class="hero-img-wrap">
+                <div class="food-emoji">🍕</div>
+                <div class="food-float food-1">🍔</div>
+                <div class="food-float food-2">🌮</div>
+                <div class="food-float food-3">🍜</div>
+                <div class="food-float food-4">🍣</div>
+                <div class="food-float food-5">🧁</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How CraveIt Works</h2>
+            <p class="section-subtitle">Order your favourite food in 3 simple steps</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">🏪</div>
+                    <div class="step-number">1</div>
+                    <h3>Choose Restaurant</h3>
+                    <p>Browse from our wide selection of top-rated restaurants</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-icon">🍽️</div>
+                    <div class="step-number">2</div>
+                    <h3>Pick Your Food</h3>
+                    <p>Select from hundreds of delicious menu items</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-icon">🚀</div>
+                    <div class="step-number">3</div>
+                    <h3>Fast Delivery</h3>
+                    <p>Get your food delivered hot and fresh to your door</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">What Are You Craving?</h2>
+            <div class="category-grid">
+                @for (cat of categories; track cat.name) {
+                    <a routerLink="/restaurants" class="category-card">
+                        <span class="cat-emoji">{{ cat.emoji }}</span>
+                        <span class="cat-name">{{ cat.name }}</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-card">
+                <div class="cta-content">
+                    <h2>Ready to Order?</h2>
+                    <p>Join thousands of happy customers ordering with CraveIt</p>
+                    <button class="btn btn-white btn-lg"
+                        (click)="getStarted()">
+                        Get Started Free →
+                    </button>
+                </div>
+                <div class="cta-emoji">🍕🚀</div>
+            </div>
+        </div>
+    </section>
+
+</div>
