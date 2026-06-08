@@ -1,0 +1,42 @@
+services:
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: craveit-db
+    environment:
+      SA_PASSWORD: "CraveIt@123!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+      MSSQL_MEMORY_LIMIT_MB: "512"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  api:
+    build:
+      context: ./OlnlineFoodOrderingAPI
+      dockerfile: Dockerfile
+    container_name: craveit-api
+    ports:
+      - "5000:80"
+    environment:
+      - DOCKER_ENV=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    build:
+      context: ./FoodOrdering.Client
+      dockerfile: Dockerfile
+    container_name: craveit-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    restart: always
+
+volumes:
+  sqldata:
